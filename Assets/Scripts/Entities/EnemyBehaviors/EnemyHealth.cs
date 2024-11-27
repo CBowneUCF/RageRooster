@@ -50,14 +50,17 @@ public class EnemyHealth : Health, IAttacker
 
     public void SetStun(bool value)
     {
-        foreach (Behaviour B in disableComponents) B.enabled = !value;
+        if(disableComponents.Length > 0) 
+            foreach (Behaviour B in disableComponents) 
+                if(B != null) B.enabled = !value;
 
     }
 
     public void Destroy()
     {
         if(poofPrefab) Instantiate(poofPrefab);
-        Destroy(gameObject);
+        if (PoolableObject.Is(gameObject)) PoolableObject.Is(gameObject).Disable();
+        else Destroy(gameObject);
     }
 
 
@@ -82,7 +85,9 @@ public class EnemyHealth : Health, IAttacker
         hasRagdolled = true;
         hasHitSomething = false;
         rb.gameObject.layer = Layers.NonSolid;
-        foreach (Behaviour B in disableComponents) B.enabled = false;
+        if (disableComponents.Length > 0) 
+            foreach (Behaviour B in disableComponents) 
+                if (B != null) B.enabled = false;
         rb.velocity = (attack.source as MonoBehaviour).transform.TransformDirection(attack.velocity);
 
         StartCoroutine(Ragdolling());
@@ -104,7 +109,7 @@ public class EnemyHealth : Health, IAttacker
 
     public void Contact(GameObject target)
     {
-        if(!hasRagdolled) return;
+        if (!hasRagdolled || target.layer == Layers.Player) return;
         hasHitSomething = true;
         (this as IAttacker).BeginAttack(target, thrownAttack, rb.velocity);
     }
