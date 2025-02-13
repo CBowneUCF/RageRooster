@@ -17,6 +17,7 @@ public class PlayerGrabber : Grabber
     public State groundState;
     public State airBorneState;
     public Upgrade dropLaunchUpgrade;
+    public PlayerAirborneMovement jumpState;
 
     #endregion
     #region Data
@@ -34,19 +35,24 @@ public class PlayerGrabber : Grabber
         //if(!move) machine.waitforMachineInit += () => { move = machine.GetGlobalBehavior<PlayerMovementBody>(); };
     }
 
-    public void GrabButtonPress()
+    public void TryGrabThrow(PlayerGrabAction state, bool held)
     {
-        if (!grabbing) InitGrab();
-        else Throw();
+        if (currentGrabbed != null) Throw();
+        else state.AttemptGrab(CheckForGrabbable(), held);
     }
 
-    public void InitGrab() 
+    public void GrabPoint()
+    {
+        if (machine.currentState.TryGetComponent(out PlayerGrabAction grab)) grab.GrabPoint();
+    }
+
+    public Grabbable CheckForGrabbable()
     {
         Collider[] results = Physics.OverlapSphere(transform.position + realOffset, checkSphereRadius, layerMask);
-        foreach (Collider r in results) 
-            if (AttemptGrab(r.gameObject)) 
-                break;
-        
+        foreach (Collider r in results)
+            if (AttemptGrab(r.gameObject, out Grabbable result, false))
+                return result; 
+        return null;
     }
 
     private void LateUpdate()
@@ -55,7 +61,7 @@ public class PlayerGrabber : Grabber
         currentGrabbed.transform.SetPositionAndRotation(twoHanded ? twoHandedHand : oneHandedHand);
     }
 
-    private void Throw()
+    public void Throw()
     {
         if (move.grounded || !dropLaunchUpgrade)
         {
@@ -68,6 +74,7 @@ public class PlayerGrabber : Grabber
 
             upcomingLaunchVelocity = Vector3.down * launchVelocity;
             move.VelocitySet(y: launchJumpMult * launchVelocity);
+            jumpState.Enter();
         }
         if(currentGrabbed.TryGetComponent(out EnemyHealth health))
         {
@@ -86,8 +93,4 @@ public class PlayerGrabber : Grabber
         currentGrabbed.rb.velocity = upcomingLaunchVelocity;
     }
 
-    /* Questions:
-     Do we want to fully reset the player's velocity on drop launch or launch them relative to their downward velocity.
-     Do we want the drop launch to work similar to a jump where the player keeps going up if they hold the button to a point?
-     */
 }
