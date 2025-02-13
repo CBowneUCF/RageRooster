@@ -14,7 +14,7 @@ public class PlayerFullbodyHitbox : PlayerStateBehavior
 
 
 
-    public override void OnEnter(State prev, bool isFinal)
+    public override void OnEnter(State prev)
     {
         if (autoActivate) SetBoxState(true);
     }

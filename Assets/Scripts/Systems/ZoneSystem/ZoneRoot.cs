@@ -54,13 +54,6 @@ public class ZoneRoot : MonoBehaviour
 
     public void SetSpawn(SavePoint This) => loadID = This.GetID();
 
-    
-    public void OnTransition()
-    {
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //Put Music Stuff Here.
-    }
-
 }
 
 [System.Serializable]

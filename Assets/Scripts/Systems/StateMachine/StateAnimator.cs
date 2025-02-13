@@ -14,6 +14,7 @@ namespace SLS.StateMachineV3
         [SerializeField] EntryAnimAction onEntry;
         [SerializeField, ShowField(nameof(__showOnEnterName))] string onEnterName;
         [SerializeField, ShowField(nameof(__showOnEnterTime))] float onEnterTime;
+        
 
         #endregion
         #region Data
@@ -26,16 +27,15 @@ namespace SLS.StateMachineV3
             if (TryGetComponentFromMachine(out animator) == false) Destroy(this);
         }
 
-        public override void OnEnter(State prev, bool isFinal)
+        public override void OnEnter(State prev)
         {
-            if (!isFinal) return;
             if (onEntry == EntryAnimAction.Play) Play(onEnterName);
             if (onEntry == EntryAnimAction.CrossFade) CrossFade(onEnterName, onEnterTime);
             if (onEntry == EntryAnimAction.Trigger) Trigger(onEnterName);
         }
 
         public void Play(string name) => animator.Play(name);
-        public void CrossFade(string name, float time = 0f) => animator.CrossFade(name, time, 0);
+        public void CrossFade(string name, float time = 0f) => animator.CrossFade(name, time);
         public void Trigger(string name) => animator.SetTrigger(name);
 
 

@@ -12,7 +12,7 @@ public class AirChaseEB : StateBehavior
     private TrackerEB playerTracker;
 
 
-    public override void OnEnter(State prev, bool isFinal)
+    public override void OnEnter(State prev)
     {
         playerTracker = state.parent.GetComponent<TrackerEB>();
     }

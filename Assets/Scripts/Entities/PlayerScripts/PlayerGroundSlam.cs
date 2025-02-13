@@ -1,31 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using SLS.StateMachineV3;
 using UnityEngine;
-using SLS.StateMachineV3;
 
-public class PlayerGroundSlam : PlayerMovementEffector
+public class PlayerGroundSlam : PlayerAirborn
 {
-    public float gravity;
-    public float terminalVelocity;
-    public bool flatGravity;
-    public PlayerAirborneMovement bouncingState;
+
+    public PlayerAirborn bouncingState;
     private SphereCollider attackCollider;
 
     public override void OnAwake() => attackCollider = GetComponent<SphereCollider>();
 
-    public override void VerticalMovement(out float? result)
+    public override void OnFixedUpdate()
     {
-        result = ApplyGravity(gravity, terminalVelocity, flatGravity);
+        body.VelocitySet(y: ApplyGravity());
         attackCollider.center = Vector3.up * (.6f + (body.velocity.y * Time.fixedDeltaTime * 2));
-
     }
 
-    public override void OnEnter(State prev, bool isFinal) 
-    { 
-        base.OnEnter(prev, isFinal); 
-        body.VelocitySet(y: body.velocity.y > gravity ? gravity : body.velocity.y); 
-    }
+    public override void OnEnter(State prev) => body.VelocitySet(y: body.velocity.y > jumpPower ? jumpPower : body.velocity.y);
 
-    private void OnTriggerEnter(Collider other) => BounceShroom.AttemptBounce(other.gameObject, bouncingState);
-
+    private void OnTriggerEnter(Collider other) => BounceShroom.AttemptBounce(other.gameObject, bouncingState); 
 }

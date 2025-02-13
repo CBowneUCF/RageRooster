@@ -21,7 +21,7 @@ public class ChaseEB : StateBehavior
         destUpdateTimer = new(destUpdateRate, UpdateDestination);
     }
 
-    public override void OnEnter(State prev, bool isFinal)
+    public override void OnEnter(State prev)
     {
         agent.enabled = true;
         agent.speed = speed;

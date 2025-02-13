@@ -20,7 +20,7 @@ public class PatrolEB : StateBehavior
         navMeshFailed = !agent.isOnNavMesh;
     }
 
-    public override void OnEnter(State prev, bool isFinal)
+    public override void OnEnter(State prev)
     {
         agent.enabled = true;
         agent.speed = speed;
