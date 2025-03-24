@@ -37,9 +37,9 @@ public class PlayerGrabAction : PlayerMovementNegater
 
     public void GrabPoint()
     {
-        if (!success) return;
+        if (!success || selectedGrabbable == null) return;
         grabber.BeginGrab(selectedGrabbable);
-        if (air && !wasHeld) grabber.Throw();
+        if (air && grabber.dropLaunchUpgrade && !Input.GrabTap.IsPressed()) grabber.BeginThrow(true);
         success = false;
         wasHeld = false;
         selectedGrabbable = null;
