@@ -27,8 +27,6 @@ public class PlayerController : PlayerStateBehavior
     public Upgrade ragingChargeUpgrade;
     public Upgrade hellcopterUpgrade;
 
-    public System.Action onAnimatorMove;
-
 	#endregion
 	#region Data
 
@@ -51,11 +49,9 @@ public class PlayerController : PlayerStateBehavior
         input.attackTap.performed       += BeginActionEvent;
         input.attackHold.performed      += BeginActionEvent;
         input.grabTap.performed         += BeginActionEvent;
-        input.grabHold.performed        += BeginActionEvent;
         input.parry.performed           += BeginActionEvent;
         input.chargeTap.performed       += BeginActionEvent;
-        input.chargeHold.performed      += BeginActionEvent;
-        input.shoot.performed           += BeginActionEvent;
+        input.interact.performed        += BeginActionEvent;
 
         input.jump.canceled             += JumpRelease;
         input.shootMode.performed       += ShootModeActivate;
@@ -69,11 +65,9 @@ public class PlayerController : PlayerStateBehavior
         input.attackTap.performed       -= BeginActionEvent;
         input.attackHold.performed      -= BeginActionEvent;
         input.grabTap.performed         -= BeginActionEvent;
-        input.grabHold.performed        -= BeginActionEvent;
         input.parry.performed           -= BeginActionEvent;
         input.chargeTap.performed       -= BeginActionEvent;
-        input.chargeHold.performed      -= BeginActionEvent;
-        input.shoot.performed           -= BeginActionEvent;
+        input.interact.performed        -= BeginActionEvent;
 
         input.jump.canceled             -= JumpRelease;
         input.shootMode.performed       -= ShootModeActivate;
@@ -111,10 +105,13 @@ public class PlayerController : PlayerStateBehavior
     }
     public void BeginJumpInputBuffer() => jumpInput = jumpBuffer + Time.fixedDeltaTime;
 
-    private void OnAnimatorMove() => onAnimatorMove?.Invoke();
 
 
-    private void BeginActionEvent(InputAction.CallbackContext callbackContext) => Machine.SendSignal(callbackContext.action.name);
+    private void BeginActionEvent(InputAction.CallbackContext callbackContext)
+    {
+        if (gameObject.activeSelf == false || Time.timeScale == 0 || PauseMenu.Active) return;
+        Machine.SendSignal(callbackContext.action.name);
+    }
     public void BeginActionEvent(string name) => Machine.SendSignal(name);
 
     public void ReadyNextAction() => Machine.ReadySignal();
@@ -122,12 +119,6 @@ public class PlayerController : PlayerStateBehavior
 
 
 
-    public void ParryActionGrounded()
-    {
-        if(interacter.TryInteract()) return;
-
-        groundedSpin.TransitionTo();
-    }
     public void ParryActionAirborne()
     {
         if(hellcopterUpgrade)
