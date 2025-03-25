@@ -136,11 +136,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attack:
-    amount: 1
+    amount: 20
     velocity: {x: 0, y: 0, z: 0}
     tags:
     - name: Wham
+    - name: PlayerPoints=1
   sourceEntity: {fileID: 0}
+  enabled: 1
   explosionRadius: 9
   explosionForce: 5
   explosionOrigin: {fileID: 3603821501232557606}

@@ -376,11 +376,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 10
   damageEvent:
-    m_PersistentCalls:
-      m_Calls: []
+    _PersistentCalls: []
   depleteEvent:
-    m_PersistentCalls:
-      m_Calls: []
+    _PersistentCalls: []
   immuneTags: []
   health: 0
   stunTime: 0
@@ -391,10 +389,9 @@ MonoBehaviour:
   minRagdollTime: 0
   maxRagdollTime: 0
   minRagdollVelovity: 0
-  projectile: 0
-  hasRagdolled: 0
   respawn: 0
   respawnTime: 0
+  currentState: 0
 --- !u!114 &5928999171478046021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411,9 +408,23 @@ MonoBehaviour:
   weight: 0
   wiggleFreeTime: 0
   maxHealthToGrab: 0
+  additionalThrowDistance: 0
   GrabStateEvent:
-    m_PersistentCalls:
-      m_Calls: []
+    _PersistentCalls: []
+  defaultEvent:
+    _PersistentCalls: []
+  grabbedEvent:
+    _PersistentCalls: []
+  thrownEvent:
+    _PersistentCalls: []
+  bounceEvent:
+    _PersistentCalls: []
+  thrownAttack:
+    amount: 1
+    velocity: {x: 0, y: 0, z: 0}
+    tags:
+    - name: Thrown
+  currentState: 0
 --- !u!114 &6785741781968151694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -528,8 +539,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5885183325829139088}
-        m_TargetAssemblyTypeName: Exploder, Assembly-CSharp
-        m_MethodName: Explode
+        m_TargetAssemblyTypeName: SpawnAndDelete, Assembly-CSharp
+        m_MethodName: PerformSpawnAndDelete
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

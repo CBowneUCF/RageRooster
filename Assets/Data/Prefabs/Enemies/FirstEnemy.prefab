@@ -737,10 +737,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackRate: 1.4
   attack:
-    amount: 1
+    amount: 0
     velocity: {x: 0, y: 0, z: 0}
     tags:
     - name: FromEnemy
+    - name: PlayerPoints=1
 --- !u!1 &1479886795859208409
 GameObject:
   m_ObjectHideFlags: 0
@@ -1748,6 +1749,7 @@ MonoBehaviour:
   weight: 1
   wiggleFreeTime: 0
   maxHealthToGrab: 5
+  additionalThrowDistance: 0
   GrabStateEvent:
     _PersistentCalls: []
   defaultEvent:
