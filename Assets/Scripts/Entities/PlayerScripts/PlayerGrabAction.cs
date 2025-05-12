@@ -19,7 +19,6 @@ public class PlayerGrabAction : PlayerStateBehavior
     {
         ranged = GetComponentFromMachine<PlayerRanged>();
         movementNegator = GetComponent<PlayerMovementAnimator>();
-        movementNegator = GetComponent<PlayerMovementAnimator>();
     }
 
     public void BeginGrabAttempt(IGrabbable attempt)
@@ -43,12 +42,12 @@ public class PlayerGrabAction : PlayerStateBehavior
     {
         if (!success || selectedGrabbable == null)
         {
-            IGrabbable lastMinute = ranged.CheckForGrabbable();
+            IGrabbable lastMinute = PlayerInteracter.Get().HasUsableGrabbable();
             if(lastMinute == null) return;
             selectedGrabbable = lastMinute;
         }
         ranged.GrabPoint(selectedGrabbable);
-        if (air && ranged.dropLaunchUpgrade && !Input.Grab.IsPressed()) ranged.TryGrabThrowAir(this);
+        if (air && ranged.dropLaunchUpgrade && Input.Grab.IsPressed()) ranged.TryGrabThrowAir(this);
         success = false;
         selectedGrabbable = null;
     }

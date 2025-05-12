@@ -5,6 +5,7 @@ using UnityEngine;
 using EditorAttributes;
 using UnityEngine.UI;
 using System;
+using static UnityEngine.Rendering.DebugUI;
 
 public class SettingsMenu : MenuSingleton<SettingsMenu>, ICustomSerialized
 {
@@ -13,7 +14,7 @@ public class SettingsMenu : MenuSingleton<SettingsMenu>, ICustomSerialized
     public static string SaveFilePath => Application.persistentDataPath;
     public static string SaveFileName => "Config";
 
-    Image brightnessOverlay;
+    public static Image brightnessOverlay;
 
     public FloatSetting masterVolume;
     public FloatSetting musicVolume;
@@ -21,8 +22,12 @@ public class SettingsMenu : MenuSingleton<SettingsMenu>, ICustomSerialized
     public FloatSetting ambienceVolume;
     public FloatSetting brightness;
 
+    //public static bool skipIntro;
+
     // Initializes the menu and reverts any changes
-    protected override void Awake()
+    protected override void Awake() => Init();
+
+    public void Init()
     {
         base.Awake();
 
@@ -33,10 +38,10 @@ public class SettingsMenu : MenuSingleton<SettingsMenu>, ICustomSerialized
 
         if (Overlay.ActiveOverlays.ContainsKey(Overlay.OverlayLayer.OverMenus))
         {
-            brightnessOverlay = Overlay.OverMenus.transform.Find("BrightnessOverlay").GetComponent<Image>();
+            if(brightnessOverlay == null) brightnessOverlay = Overlay.OverMenus.transform.Find("BrightnessOverlay").GetComponent<Image>();
             brightness.Init(value => { brightnessOverlay.color = new(0, 0, 0, value); });
         }
-        
+
         //remap.TargetInput();
         RevertChanges();
     }
@@ -66,7 +71,8 @@ public class SettingsMenu : MenuSingleton<SettingsMenu>, ICustomSerialized
         SFXVolume.Serialize("V_SFX"),
         ambienceVolume.Serialize("V_Amb"),
         brightness.Serialize("G_Brightness"),
-        remap.Serialize("Controls")
+        remap.Serialize("Controls")//,
+        //new JProperty("SkipIntro", skipIntro)
         );
 
     // Deserializes the settings from a JSON token and applies them
@@ -77,9 +83,14 @@ public class SettingsMenu : MenuSingleton<SettingsMenu>, ICustomSerialized
         SFXVolume.Deserialize(Data["V_SFX"]);
         ambienceVolume.Deserialize(Data["V_Amb"]);
         if (Data["G_Brightness"] != null) brightness.Deserialize(Data["G_Brightness"]);
+        //if (Data["SkipIntro"] != null) skipIntro = Data["SkipIntro"].As<bool>();
 
         remap.Deserialize(Data["Controls"]);
     }
+
+
+
+    public static JToken GetTempSettings() => new JObject().LoadJsonFromFile(SaveFilePath, SaveFileName);
 
     [System.Serializable]
     public class FloatSetting : ICustomSerialized

@@ -21,7 +21,8 @@ public class EnemyHealth : Health
 
     public bool respawn;
     public float respawnTime;
-    
+    public UltEvents.UltEvent onDamageEvent;
+
 
     #endregion Config
     #region Data
@@ -39,6 +40,11 @@ public class EnemyHealth : Health
         base.Awake();
         startPosition = transform.position;
         if (TryGetComponent(out ragdoll)) ragdoll.GrabStateEvent += SetEntityState;
+        if (TryGetComponent(out PoolableObject pool))
+        {
+            pool.onActivate += Respawn;
+            respawn = false;
+        }
         enemyLootSpawner = GetComponent<EnemyLootSpawner>();
     }
 
@@ -50,7 +56,8 @@ public class EnemyHealth : Health
     {
         damageEvent?.Invoke(attack.amount);
 
-        if(currentState is EntityState.RagDoll) ragdoll.SetVelocity(attack.velocity);
+        if (ragdoll && PlayerInteracter.grabbablesInFront.Contains(ragdoll)) PlayerInteracter.UpdateGrabbables();
+        if (currentState is EntityState.RagDoll) ragdoll.SetVelocity(attack.velocity);
         else if (currentState is EntityState.Default && health != 0)
         {
             Stun(attack);
@@ -125,7 +132,7 @@ public class EnemyHealth : Health
     public void Destroy()
     {
         if (poofPrefab) Instantiate(poofPrefab);
-        if (enemyLootSpawner != null) enemyLootSpawner.SpawnLoot(transform.position);
+        //if (enemyLootSpawner != null) enemyLootSpawner.SpawnLootOnDestroy(transform.position);
         if (respawn)
         {
             gameObject.SetActive(false);

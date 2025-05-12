@@ -10,6 +10,7 @@ public class ZoneManager : Singleton<ZoneManager>
     [SerializeField] AYellowpaper.SerializedCollections.SerializedDictionary<string, ZoneProxy> proxies = new();
     public string defaultAreaScene;
     public float minLoadTime;
+    public Timer.Loop updateTimer = new(.5f);
     public Timer.Loop offsetSetTimer = new(15f);
     public float distanceToOriginShift;
 
@@ -32,7 +33,8 @@ public class ZoneManager : Singleton<ZoneManager>
     // Updates all zone proxies and ticks the offset timer.
     public void Update()
     {
-        foreach (ZoneProxy area in proxies.Values) area.Update();
+        updateTimer.Tick(() => { foreach (ZoneProxy area in proxies.Values) area.Update(); });
+        
         offsetSetTimer.Tick(UpdateOffset);
     }
 
@@ -126,9 +128,9 @@ public class ZoneManager : Singleton<ZoneManager>
     public static bool ZoneIsReady(string name) => Get().proxies.ContainsKey(name) && Get().proxies[name].loaded;
 
     // Unloads all zones asynchronously.
-    public IEnumerator UnloadAll()
+    public static IEnumerator UnloadAll()
     {
-        ZoneProxy[] zones = proxies.Values.ToArray();
+        ZoneProxy[] zones = Get().proxies.Values.ToArray();
 
         int unloadsLeft = 0;
         for (int i = 0; i < zones.Length; i++)
@@ -141,8 +143,8 @@ public class ZoneManager : Singleton<ZoneManager>
             }
 
         yield return new WaitUntil(() => unloadsLeft == 0);
-        proxies.Clear();
-    }
+        Get().proxies.Clear();
+    } 
 
     // Checks if a scene is currently loaded.
     public static bool IsSceneLoaded(string name) => SceneManager.GetSceneByName(name).isLoaded;
